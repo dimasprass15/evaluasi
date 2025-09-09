@@ -391,41 +391,21 @@
             50% { opacity: 0.7; }
         }
         
-        .voice-button {
-            background: linear-gradient(135deg, #4299e1, #3182ce);
+        .auto-status {
+            background: linear-gradient(135deg, #38a169, #2f855a);
             color: white;
-            border: none;
             padding: 8px 12px;
             border-radius: 15px;
             font-size: 0.7rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            text-align: center;
             width: 100%;
+            animation: autoGlow 2s infinite;
         }
         
-        .voice-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(66, 153, 225, 0.3);
-        }
-        
-        .voice-button:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .voice-button.listening {
-            background: linear-gradient(135deg, #e53e3e, #c53030);
-            animation: buttonPulse 1s infinite;
-        }
-        
-        @keyframes buttonPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes autoGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
         
         .final-score {
@@ -568,7 +548,7 @@
                 margin-bottom: 8px;
             }
             
-            .voice-button {
+            .auto-status {
                 padding: 6px 8px;
                 font-size: 0.6rem;
             }
@@ -682,7 +662,7 @@
                 margin-bottom: 6px;
             }
             
-            .voice-button {
+            .auto-status {
                 padding: 4px 6px;
                 font-size: 0.5rem;
             }
@@ -750,7 +730,7 @@
                 font-size: 0.45rem;
             }
             
-            .voice-button {
+            .auto-status {
                 padding: 3px 5px;
                 font-size: 0.45rem;
             }
@@ -792,7 +772,7 @@
                     <div class="voice-text" id="voice-text">Katakan "BENAR" atau "SALAH"</div>
                     <div class="listening-indicator" id="listening-indicator"></div>
                 </div>
-                <button class="voice-button" id="start-listening" onclick="startListening()">🎤 Mulai Mendengar</button>
+                <div class="auto-status">🔄 Otomatis Aktif</div>
             </div>
             
             <div class="no-speech-support" id="no-speech-support" style="display: none;">
@@ -1087,9 +1067,9 @@
                 recognition = new SpeechRecognition();
                 
                 recognition.lang = 'id-ID'; // Indonesian language
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.maxAlternatives = 3;
+                recognition.continuous = true; // Keep listening continuously
+                recognition.interimResults = true; // Get interim results for faster response
+                recognition.maxAlternatives = 5; // More alternatives for better accuracy
                 
                 recognition.onstart = function() {
                     isListening = true;
@@ -1098,83 +1078,63 @@
                 };
                 
                 recognition.onresult = function(event) {
-                    let foundMatch = false;
+                    if (selectedAnswer !== null) return; // Stop processing if already answered
                     
-                    // Check all alternatives for better accuracy
-                    for (let i = 0; i < event.results[0].length; i++) {
-                        const transcript = event.results[0][i].transcript.toLowerCase().trim();
-                        console.log(`Alternative ${i + 1}:`, transcript);
+                    // Process the latest result
+                    const lastResultIndex = event.results.length - 1;
+                    const result = event.results[lastResultIndex];
+                    
+                    // Check if this is a final result or confident interim result
+                    if (result.isFinal || result[0].confidence > 0.7) {
+                        let foundMatch = false;
                         
-                        // More flexible matching
-                        if (transcript.includes('benar') || transcript.includes('bener') || transcript.includes('betul')) {
-                            selectAnswer(true);
-                            foundMatch = true;
-                            break;
-                        } else if (transcript.includes('salah') || transcript.includes('sala') || transcript.includes('keliru')) {
-                            selectAnswer(false);
-                            foundMatch = true;
-                            break;
+                        // Check all alternatives for better accuracy
+                        for (let i = 0; i < result.length; i++) {
+                            const transcript = result[i].transcript.toLowerCase().trim();
+                            console.log(`Processing: "${transcript}" (confidence: ${result[i].confidence})`);
+                            
+                            // More flexible matching - focus only on "benar" and "salah"
+                            if (transcript.includes('benar') || transcript.includes('bener') || transcript.includes('betul') || transcript.includes('nar')) {
+                                selectAnswer(true);
+                                foundMatch = true;
+                                break;
+                            } else if (transcript.includes('salah') || transcript.includes('sala') || transcript.includes('keliru') || transcript.includes('lah')) {
+                                selectAnswer(false);
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+                        
+                        // Don't show unrecognized speech to avoid confusion
+                        if (!foundMatch && result.isFinal) {
+                            console.log('No match found, continuing to listen...');
                         }
                     }
-                    
-                    if (!foundMatch) {
-                        // Show what was heard and continue listening
-                        const transcript = event.results[0][0].transcript;
-                        document.getElementById('voice-text').textContent = `Terdengar: "${transcript}". Katakan "BENAR" atau "SALAH"`;
-                        setTimeout(() => {
-                            if (selectedAnswer === null) {
-                                document.getElementById('voice-text').textContent = 'Katakan "BENAR" atau "SALAH"';
-                                // Auto restart listening
-                                setTimeout(() => {
-                                    if (selectedAnswer === null && !isListening) {
-                                        startListening();
-                                    }
-                                }, 1000);
-                            }
-                        }, 3000);
-                    }
-                    
-                    isListening = false;
-                    updateVoiceUI();
                 };
                 
                 recognition.onerror = function(event) {
                     console.log('Speech recognition error:', event.error);
-                    isListening = false;
-                    updateVoiceUI();
                     
-                    let errorMessage = 'Error mendengar suara. ';
-                    switch(event.error) {
-                        case 'not-allowed':
-                            errorMessage = 'Izin mikrofon diperlukan. Klik ikon kunci di browser dan izinkan mikrofon.';
-                            break;
-                        case 'no-speech':
-                            errorMessage = 'Tidak ada suara terdeteksi. Coba bicara lebih keras.';
-                            break;
-                        case 'audio-capture':
-                            errorMessage = 'Mikrofon tidak terdeteksi. Periksa koneksi mikrofon.';
-                            break;
-                        case 'network':
-                            errorMessage = 'Koneksi internet diperlukan untuk pengenalan suara.';
-                            break;
-                        default:
-                            errorMessage += 'Coba lagi.';
-                    }
-                    
-                    document.getElementById('voice-text').textContent = errorMessage;
-                    
-                    // Auto retry for certain errors
-                    if (event.error === 'no-speech' && selectedAnswer === null) {
+                    // Only handle critical errors, ignore no-speech for continuous listening
+                    if (event.error === 'not-allowed') {
+                        isListening = false;
+                        updateVoiceUI();
+                        document.getElementById('voice-text').textContent = 'Izin mikrofon diperlukan. Refresh halaman dan izinkan mikrofon.';
+                    } else if (event.error === 'audio-capture') {
+                        isListening = false;
+                        updateVoiceUI();
+                        document.getElementById('voice-text').textContent = 'Mikrofon tidak terdeteksi. Periksa koneksi mikrofon.';
+                    } else if (event.error === 'network') {
+                        isListening = false;
+                        updateVoiceUI();
+                        document.getElementById('voice-text').textContent = 'Koneksi internet diperlukan untuk pengenalan suara.';
+                    } else {
+                        // For other errors like 'no-speech', just restart automatically
                         setTimeout(() => {
-                            if (selectedAnswer === null) {
-                                document.getElementById('voice-text').textContent = 'Katakan "BENAR" atau "SALAH"';
-                                setTimeout(() => {
-                                    if (selectedAnswer === null && !isListening) {
-                                        startListening();
-                                    }
-                                }, 1000);
+                            if (selectedAnswer === null && !isListening) {
+                                startListening();
                             }
-                        }, 2000);
+                        }, 1000);
                     }
                 };
                 
@@ -1182,6 +1142,15 @@
                     isListening = false;
                     updateVoiceUI();
                     console.log('Speech recognition ended');
+                    
+                    // Auto-restart if no answer selected yet
+                    if (selectedAnswer === null) {
+                        setTimeout(() => {
+                            if (selectedAnswer === null && !isListening) {
+                                startListening();
+                            }
+                        }, 500);
+                    }
                 };
                 
                 speechSupported = true;
@@ -1221,22 +1190,15 @@
         function updateVoiceUI() {
             const voiceControls = document.getElementById('voice-controls');
             const listeningIndicator = document.getElementById('listening-indicator');
-            const startButton = document.getElementById('start-listening');
             const voiceText = document.getElementById('voice-text');
             
             if (isListening) {
                 voiceControls.classList.add('listening');
                 listeningIndicator.classList.add('active');
-                startButton.textContent = '🔴 Mendengar...';
-                startButton.classList.add('listening');
-                startButton.disabled = true;
                 voiceText.textContent = 'Sedang mendengar... Katakan "BENAR" atau "SALAH"';
             } else {
                 voiceControls.classList.remove('listening');
                 listeningIndicator.classList.remove('active');
-                startButton.textContent = '🎤 Mulai Mendengar';
-                startButton.classList.remove('listening');
-                startButton.disabled = selectedAnswer !== null;
                 if (selectedAnswer === null && voiceText.textContent.includes('Sedang mendengar')) {
                     voiceText.textContent = 'Katakan "BENAR" atau "SALAH"';
                 }
@@ -1264,7 +1226,7 @@
             if (speechSupported && selectedAnswer === null) {
                 setTimeout(() => {
                     startListening();
-                }, 1500);
+                }, 500); // Start immediately after question loads
             }
         }
         
@@ -1275,5 +1237,5 @@
             autoStartListening();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c52b5ac6e4410c',t:'MTc1NzQwNTAwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c5328812b6f916',t:'MTc1NzQwNTMwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

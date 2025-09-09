@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi Kata-kata Arab</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+        
+        @font-face {
+            font-family: 'UthmanTaha';
+            src: url('https://fonts.gstatic.com/s/scheherazade/v28/YA9Ur0yF4ETZN60keViq1kQgtA.woff2') format('woff2');
+            font-display: swap;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Amiri', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4299e1, #38a169, #ed8936, #e53e3e);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .title {
+            color: #4a5568;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .title::after {
+            content: '📚';
+            position: absolute;
+            right: -50px;
+            top: 0;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4299e1, #38a169);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4299e1;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .question-card {
+            background: #f7fafc;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            border: 3px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .question-card.correct {
+            border-color: #38a169;
+            background: #f0fff4;
+            animation: correctPulse 0.6s ease;
+        }
+        
+        .question-card.incorrect {
+            border-color: #e53e3e;
+            background: #fff5f5;
+            animation: shake 0.6s ease;
+        }
+        
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .question-number {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: #4299e1;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .arabic-word {
+            font-family: 'UthmanTaha', 'Scheherazade New', 'Amiri', serif;
+            font-size: 4rem;
+            color: #2d3748;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .instruction-text {
+            font-size: 1rem;
+            color: #718096;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background: #f0fff4;
+            color: #22543d;
+            border: 2px solid #38a169;
+        }
+        
+        .feedback.incorrect {
+            background: #fff5f5;
+            color: #742a2a;
+            border: 2px solid #e53e3e;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .voice-controls {
+            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+            border: 3px solid #4299e1;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .voice-controls::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4299e1, #38a169);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .voice-status {
+            margin-bottom: 20px;
+        }
+        
+        .mic-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .voice-text {
+            font-size: 1.2rem;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .listening-indicator {
+            width: 30px;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .listening-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+        
+        .listening-indicator.active {
+            background: #e53e3e;
+            animation: pulse 1s infinite;
+            box-shadow: 0 0 20px rgba(229, 62, 62, 0.5);
+        }
+        
+        .listening-indicator.active::before {
+            background: white;
+            animation: innerPulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes innerPulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(0.8); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        
+        .voice-controls.listening {
+            border-color: #e53e3e;
+            background: linear-gradient(135deg, #fff5f5, #fed7d7);
+            animation: listeningGlow 2s infinite;
+        }
+        
+        @keyframes listeningGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(229, 62, 62, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(229, 62, 62, 0.4); }
+        }
+        
+        .voice-controls.listening .voice-text {
+            color: #e53e3e;
+            animation: textPulse 1.5s infinite;
+        }
+        
+        @keyframes textPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .voice-button {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .voice-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(66, 153, 225, 0.3);
+        }
+        
+        .voice-button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .voice-button.listening {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            animation: buttonPulse 1s infinite;
+        }
+        
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .final-score {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .score-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .score-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .score-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .no-speech-support {
+            background: #fff5f5;
+            border: 2px solid #e53e3e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #742a2a;
+        }
+        
+        @media (max-width: 1024px) {
+            .game-container {
+                padding: 30px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .title::after {
+                right: -40px;
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+            
+            .title::after {
+                display: none;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .question-card {
+                padding: 25px 20px;
+                margin-bottom: 20px;
+            }
+            
+            .question-number {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+                left: 20px;
+            }
+            
+            .arabic-word {
+                font-size: 2.5rem;
+                margin: 15px 0;
+            }
+            
+            .instruction-text {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+            
+            .voice-controls {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .mic-icon {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+            
+            .voice-text {
+                font-size: 1rem;
+                margin-bottom: 10px;
+            }
+            
+            .listening-indicator {
+                width: 25px;
+                height: 25px;
+                margin-bottom: 15px;
+            }
+            
+            .voice-button {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .feedback {
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            .controls {
+                gap: 10px;
+                flex-direction: column;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .score-details {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .score-title {
+                font-size: 1.5rem;
+            }
+            
+            .score-number {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-container {
+                padding: 15px;
+                margin: 5px;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .stats {
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .stat-number {
+                font-size: 1.3rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .question-card {
+                padding: 20px 15px;
+            }
+            
+            .question-number {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+                left: 15px;
+            }
+            
+            .arabic-word {
+                font-size: 2rem;
+                margin: 10px 0;
+            }
+            
+            .instruction-text {
+                font-size: 0.85rem;
+                margin-bottom: 15px;
+            }
+            
+            .voice-controls {
+                padding: 15px 10px;
+                margin-bottom: 15px;
+            }
+            
+            .mic-icon {
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+            
+            .voice-text {
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
+            
+            .listening-indicator {
+                width: 20px;
+                height: 20px;
+                margin-bottom: 12px;
+            }
+            
+            .voice-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .feedback {
+                padding: 12px;
+                font-size: 0.9rem;
+                margin-top: 15px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .final-score {
+                padding: 25px 15px;
+            }
+            
+            .score-title {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+            
+            .score-number {
+                font-size: 1.8rem;
+            }
+            
+            .score-label {
+                font-size: 0.9rem;
+            }
+            
+            .no-speech-support {
+                padding: 15px;
+                font-size: 0.9rem;
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .game-container {
+                padding: 10px;
+            }
+            
+            .title {
+                font-size: 1.3rem;
+            }
+            
+            .arabic-word {
+                font-size: 1.8rem;
+            }
+            
+            .voice-controls {
+                padding: 12px 8px;
+            }
+            
+            .mic-icon {
+                font-size: 1.8rem;
+            }
+            
+            .voice-text {
+                font-size: 0.8rem;
+            }
+            
+            .voice-button {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="title">Evaluasi Kata Arab</h1>
+        <p class="subtitle">Uji pemahaman dengan kontrol suara!</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="current-question">1</div>
+                <div class="stat-label">Soal Saat Ini</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="correct-count">0</div>
+                <div class="stat-label">Jawaban Benar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="score">0</div>
+                <div class="stat-label">Skor</div>
+            </div>
+        </div>
+        
+        <div class="question-card" id="question-card">
+            <div class="question-number" id="question-number">Soal 1</div>
+            <div class="arabic-word" id="arabic-word">تَرَ</div>
+            <div class="instruction-text">Siswa membaca kata di atas. Ustadz/Ustadzah menilai dengan suara:</div>
+            
+            <div class="voice-controls" id="voice-controls">
+                <div class="voice-status" id="voice-status">
+                    <div class="mic-icon">🎤</div>
+                    <div class="voice-text" id="voice-text">Katakan "BENAR" atau "SALAH"</div>
+                    <div class="listening-indicator" id="listening-indicator"></div>
+                </div>
+                <button class="voice-button" id="start-listening" onclick="startListening()">🎤 Mulai Mendengar</button>
+            </div>
+            
+            <div class="no-speech-support" id="no-speech-support" style="display: none;">
+                ⚠️ Browser Anda tidak mendukung pengenalan suara. Silakan gunakan Chrome, Edge, atau Safari terbaru.
+            </div>
+            
+            <div class="feedback" id="feedback">
+                <!-- Feedback akan ditampilkan di sini -->
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Soal Berikutnya</button>
+            <button class="btn btn-success" id="repeat-btn" onclick="repeatQuestion()" style="display: none;">Ulangi Bacaan</button>
+            <button class="btn btn-warning" onclick="restartQuiz()">Mulai Ulang</button>
+        </div>
+        
+        <div class="final-score" id="final-score">
+            <div class="score-title">🎉 Evaluasi Selesai!</div>
+            <p>Berikut adalah hasil evaluasi Anda:</p>
+            <div class="score-details">
+                <div class="score-item">
+                    <div class="score-number" id="final-correct">0</div>
+                    <div class="score-label">Jawaban Benar</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="final-total">0</div>
+                    <div class="score-label">Total Soal</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="final-percentage">0%</div>
+                    <div class="score-label">Persentase</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const arabicWords = [
+            { arabic: 'تَرَ', meaning: 'melihat' },
+            { arabic: 'لَكَ', meaning: 'untukmu' },
+            { arabic: 'مَعَ', meaning: 'dengan' },
+            { arabic: 'يَرَ', meaning: 'dia melihat' },
+            { arabic: 'أَبَقَ', meaning: 'melarikan diri' },
+            { arabic: 'أَجَلَ', meaning: 'ya/tentu' },
+            { arabic: 'أَحَدَ', meaning: 'seseorang' },
+            { arabic: 'أَخَذَ', meaning: 'mengambil' },
+            { arabic: 'أَفَلَ', meaning: 'tenggelam' },
+            { arabic: 'أَكَلَ', meaning: 'makan' },
+            { arabic: 'أَمَرَ', meaning: 'memerintah' },
+            { arabic: 'بَدَأَ', meaning: 'memulai' },
+            { arabic: 'بَسَطَ', meaning: 'merentangkan' },
+            { arabic: 'بَطَنَ', meaning: 'perut' },
+            { arabic: 'بَعَثَ', meaning: 'mengutus' },
+            { arabic: 'بَلَغَ', meaning: 'mencapai' },
+            { arabic: 'تَرَكَ', meaning: 'meninggalkan' },
+            { arabic: 'تَضَعَ', meaning: 'meletakkan' },
+            { arabic: 'تَقَعَ', meaning: 'jatuh' },
+            { arabic: 'جَرَمَ', meaning: 'berbuat dosa' },
+            { arabic: 'جَعَلَ', meaning: 'membuat' },
+            { arabic: 'جَمَعَ', meaning: 'mengumpulkan' },
+            { arabic: 'جَهَرَ', meaning: 'bersuara keras' },
+            { arabic: 'حَذَرَ', meaning: 'berhati-hati' },
+            { arabic: 'حَسَدَ', meaning: 'iri hati' },
+            { arabic: 'حَضَرَ', meaning: 'hadir' },
+            { arabic: 'حَكَمَ', meaning: 'memutuskan' },
+            { arabic: 'حَمَلَ', meaning: 'membawa' },
+            { arabic: 'خَتَمَ', meaning: 'menutup' },
+            { arabic: 'خَلَقَ', meaning: 'menciptakan' },
+            { arabic: 'دَخَلَ', meaning: 'masuk' },
+            { arabic: 'ذَرَأَ', meaning: 'menciptakan' },
+            { arabic: 'ذَهَبَ', meaning: 'pergi' },
+            { arabic: 'رَجَعَ', meaning: 'kembali' },
+            { arabic: 'رَفَثَ', meaning: 'berkata kotor' },
+            { arabic: 'رَفَعَ', meaning: 'mengangkat' },
+            { arabic: 'زَعَمَ', meaning: 'mengaku' },
+            { arabic: 'سَأَلَ', meaning: 'bertanya' },
+            { arabic: 'سَبَقَ', meaning: 'mendahului' },
+            { arabic: 'سَرَقَ', meaning: 'mencuri' },
+            { arabic: 'سَقَرَ', meaning: 'neraka' },
+            { arabic: 'سَكَتَ', meaning: 'diam' },
+            { arabic: 'سَكَنَ', meaning: 'tinggal' },
+            { arabic: 'سَلَفَ', meaning: 'telah berlalu' },
+            { arabic: 'شَجَرَ', meaning: 'pohon' },
+            { arabic: 'شَرَحَ', meaning: 'menjelaskan' },
+            { arabic: 'شَكَرَ', meaning: 'berterima kasih' },
+            { arabic: 'صَبَرَ', meaning: 'sabar' },
+            { arabic: 'صَدَقَ', meaning: 'jujur' },
+            { arabic: 'صَرَفَ', meaning: 'mengalihkan' }
+        ];
+        
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let totalScore = 0;
+        let selectedAnswer = null;
+        let questions = [];
+        
+        function initQuiz() {
+            // Use first 50 questions for better performance
+            questions = arabicWords.slice(0, 50);
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            totalScore = 0;
+            selectedAnswer = null;
+            
+            document.getElementById('final-score').style.display = 'none';
+            document.getElementById('question-card').style.display = 'block';
+            
+            updateStats();
+            showQuestion();
+        }
+        
+        function updateStats() {
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('correct-count').textContent = correctAnswers;
+            document.getElementById('score').textContent = totalScore;
+            
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+        
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showFinalScore();
+                return;
+            }
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            const questionCard = document.getElementById('question-card');
+            
+            // Reset card state
+            questionCard.className = 'question-card';
+            
+            document.getElementById('question-number').textContent = `Kata ${currentQuestionIndex + 1}`;
+            document.getElementById('arabic-word').textContent = currentQuestion.arabic;
+            
+            // Hide feedback and reset buttons
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').style.display = 'inline-block';
+            document.getElementById('repeat-btn').style.display = 'none';
+            selectedAnswer = null;
+            
+            // Reset voice controls
+            resetVoiceControls();
+        }
+        
+        // Create audio context for sound effects
+        function createBeepSound(frequency, duration, type = 'sine') {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            } catch (error) {
+                console.log('Audio not supported:', error);
+            }
+        }
+        
+        function playCorrectSound() {
+            // Play a pleasant ascending tone for correct answer
+            createBeepSound(523, 0.2); // C5
+            setTimeout(() => createBeepSound(659, 0.2), 100); // E5
+            setTimeout(() => createBeepSound(784, 0.3), 200); // G5
+        }
+        
+        function playIncorrectSound() {
+            // Play a descending tone for incorrect answer
+            createBeepSound(400, 0.3, 'sawtooth'); // Lower frequency with sawtooth wave
+            setTimeout(() => createBeepSound(300, 0.4, 'sawtooth'), 150);
+        }
+
+        function selectAnswer(userAnswer) {
+            if (selectedAnswer !== null) return; // Prevent multiple selections
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            selectedAnswer = userAnswer;
+            const feedback = document.getElementById('feedback');
+            const questionCard = document.getElementById('question-card');
+            const nextBtn = document.getElementById('next-btn');
+            const repeatBtn = document.getElementById('repeat-btn');
+            
+            // Stop listening
+            stopListening();
+            
+            // Play sound effect immediately
+            if (userAnswer === true) {
+                playCorrectSound();
+            } else {
+                playIncorrectSound();
+            }
+            
+            setTimeout(() => {
+                // Show feedback
+                feedback.style.display = 'block';
+                if (userAnswer === true) {
+                    feedback.className = 'feedback correct';
+                    feedback.innerHTML = `✅ Bacaan BENAR! Arti: <strong>${currentQuestion.meaning}</strong>`;
+                    questionCard.classList.add('correct');
+                    correctAnswers++;
+                    totalScore += 10;
+                    nextBtn.disabled = false;
+                    nextBtn.style.display = 'inline-block';
+                    repeatBtn.style.display = 'none';
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.innerHTML = `❌ Bacaan SALAH! Silakan ulangi bacaan kata ini.<br>Arti yang benar: <strong>${currentQuestion.meaning}</strong>`;
+                    questionCard.classList.add('incorrect');
+                    nextBtn.style.display = 'none';
+                    repeatBtn.style.display = 'inline-block';
+                }
+                
+                updateStats();
+            }, 500);
+        }
+        
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+        
+        function repeatQuestion() {
+            // Reset current question for repeat
+            const questionCard = document.getElementById('question-card');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const repeatBtn = document.getElementById('repeat-btn');
+            
+            // Reset card state
+            questionCard.className = 'question-card';
+            
+            // Hide feedback and buttons
+            feedback.style.display = 'none';
+            nextBtn.disabled = true;
+            nextBtn.style.display = 'inline-block';
+            repeatBtn.style.display = 'none';
+            selectedAnswer = null;
+            
+            // Reset voice controls
+            resetVoiceControls();
+        }
+        
+        function showFinalScore() {
+            document.getElementById('question-card').style.display = 'none';
+            const finalScore = document.getElementById('final-score');
+            finalScore.style.display = 'block';
+            
+            const percentage = Math.round((correctAnswers / questions.length) * 100);
+            
+            document.getElementById('final-correct').textContent = correctAnswers;
+            document.getElementById('final-total').textContent = questions.length;
+            document.getElementById('final-percentage').textContent = percentage + '%';
+            
+            // Update progress to 100%
+            document.getElementById('progress-fill').style.width = '100%';
+        }
+        
+        function restartQuiz() {
+            initQuiz();
+        }
+        
+        // Voice recognition variables
+        let recognition = null;
+        let isListening = false;
+        let speechSupported = false;
+        
+        // Initialize speech recognition
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                
+                recognition.lang = 'id-ID'; // Indonesian language
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 3;
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    updateVoiceUI();
+                    console.log('Speech recognition started');
+                };
+                
+                recognition.onresult = function(event) {
+                    let foundMatch = false;
+                    
+                    // Check all alternatives for better accuracy
+                    for (let i = 0; i < event.results[0].length; i++) {
+                        const transcript = event.results[0][i].transcript.toLowerCase().trim();
+                        console.log(`Alternative ${i + 1}:`, transcript);
+                        
+                        // More flexible matching
+                        if (transcript.includes('benar') || transcript.includes('bener') || transcript.includes('betul')) {
+                            selectAnswer(true);
+                            foundMatch = true;
+                            break;
+                        } else if (transcript.includes('salah') || transcript.includes('sala') || transcript.includes('keliru')) {
+                            selectAnswer(false);
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!foundMatch) {
+                        // Show what was heard and continue listening
+                        const transcript = event.results[0][0].transcript;
+                        document.getElementById('voice-text').textContent = `Terdengar: "${transcript}". Katakan "BENAR" atau "SALAH"`;
+                        setTimeout(() => {
+                            if (selectedAnswer === null) {
+                                document.getElementById('voice-text').textContent = 'Katakan "BENAR" atau "SALAH"';
+                                // Auto restart listening
+                                setTimeout(() => {
+                                    if (selectedAnswer === null && !isListening) {
+                                        startListening();
+                                    }
+                                }, 1000);
+                            }
+                        }, 3000);
+                    }
+                    
+                    isListening = false;
+                    updateVoiceUI();
+                };
+                
+                recognition.onerror = function(event) {
+                    console.log('Speech recognition error:', event.error);
+                    isListening = false;
+                    updateVoiceUI();
+                    
+                    let errorMessage = 'Error mendengar suara. ';
+                    switch(event.error) {
+                        case 'not-allowed':
+                            errorMessage = 'Izin mikrofon diperlukan. Klik ikon kunci di browser dan izinkan mikrofon.';
+                            break;
+                        case 'no-speech':
+                            errorMessage = 'Tidak ada suara terdeteksi. Coba bicara lebih keras.';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = 'Mikrofon tidak terdeteksi. Periksa koneksi mikrofon.';
+                            break;
+                        case 'network':
+                            errorMessage = 'Koneksi internet diperlukan untuk pengenalan suara.';
+                            break;
+                        default:
+                            errorMessage += 'Coba lagi.';
+                    }
+                    
+                    document.getElementById('voice-text').textContent = errorMessage;
+                    
+                    // Auto retry for certain errors
+                    if (event.error === 'no-speech' && selectedAnswer === null) {
+                        setTimeout(() => {
+                            if (selectedAnswer === null) {
+                                document.getElementById('voice-text').textContent = 'Katakan "BENAR" atau "SALAH"';
+                                setTimeout(() => {
+                                    if (selectedAnswer === null && !isListening) {
+                                        startListening();
+                                    }
+                                }, 1000);
+                            }
+                        }, 2000);
+                    }
+                };
+                
+                recognition.onend = function() {
+                    isListening = false;
+                    updateVoiceUI();
+                    console.log('Speech recognition ended');
+                };
+                
+                speechSupported = true;
+                return true;
+            } else {
+                console.log('Speech recognition not supported');
+                document.getElementById('voice-controls').style.display = 'none';
+                document.getElementById('no-speech-support').style.display = 'block';
+                speechSupported = false;
+                return false;
+            }
+        }
+        
+        function startListening() {
+            if (selectedAnswer !== null) return; // Don't listen if already answered
+            
+            if (recognition && !isListening && speechSupported) {
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.log('Error starting recognition:', error);
+                    document.getElementById('voice-text').textContent = 'Error memulai pengenalan suara. Coba lagi.';
+                }
+            }
+        }
+        
+        function stopListening() {
+            if (recognition && isListening) {
+                try {
+                    recognition.stop();
+                } catch (error) {
+                    console.log('Error stopping recognition:', error);
+                }
+            }
+        }
+        
+        function updateVoiceUI() {
+            const voiceControls = document.getElementById('voice-controls');
+            const listeningIndicator = document.getElementById('listening-indicator');
+            const startButton = document.getElementById('start-listening');
+            const voiceText = document.getElementById('voice-text');
+            
+            if (isListening) {
+                voiceControls.classList.add('listening');
+                listeningIndicator.classList.add('active');
+                startButton.textContent = '🔴 Mendengar...';
+                startButton.classList.add('listening');
+                startButton.disabled = true;
+                voiceText.textContent = 'Sedang mendengar... Katakan "BENAR" atau "SALAH"';
+            } else {
+                voiceControls.classList.remove('listening');
+                listeningIndicator.classList.remove('active');
+                startButton.textContent = '🎤 Mulai Mendengar';
+                startButton.classList.remove('listening');
+                startButton.disabled = selectedAnswer !== null;
+                if (selectedAnswer === null && voiceText.textContent.includes('Sedang mendengar')) {
+                    voiceText.textContent = 'Katakan "BENAR" atau "SALAH"';
+                }
+            }
+        }
+        
+        function resetVoiceControls() {
+            stopListening();
+            updateVoiceUI();
+            document.getElementById('voice-text').textContent = 'Katakan "BENAR" atau "SALAH"';
+        }
+        
+        // Initialize quiz on page load
+        initQuiz();
+        
+        // Initialize speech recognition
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                initSpeechRecognition();
+            }, 1000);
+        });
+        
+        // Auto-start listening when question loads
+        function autoStartListening() {
+            if (speechSupported && selectedAnswer === null) {
+                setTimeout(() => {
+                    startListening();
+                }, 1500);
+            }
+        }
+        
+        // Call auto-start when showing new question
+        const originalShowQuestion = showQuestion;
+        showQuestion = function() {
+            originalShowQuestion();
+            autoStartListening();
+        };
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c5229296c09c74',t:'MTc1NzQwNDY0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

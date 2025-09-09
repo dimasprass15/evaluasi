@@ -1070,7 +1070,20 @@
                 recognition.lang = 'id-ID'; // Indonesian language
                 recognition.continuous = true; // Keep listening continuously
                 recognition.interimResults = true; // Get interim results for faster response
-                recognition.maxAlternatives = 5; // More alternatives for better accuracy
+                recognition.maxAlternatives = 3; // Reduced for faster processing
+                
+                // Optimize for speed and responsiveness
+                if (recognition.serviceURI) {
+                    recognition.serviceURI = 'wss://www.google.com/speech-api/v2/recognize';
+                }
+                
+                // Set audio processing parameters for lower latency
+                try {
+                    recognition.audioTrack = true;
+                    recognition.interim = true;
+                } catch (e) {
+                    console.log('Advanced audio settings not supported');
+                }
                 
                 recognition.onstart = function() {
                     isListening = true;
@@ -1085,29 +1098,32 @@
                     const lastResultIndex = event.results.length - 1;
                     const result = event.results[lastResultIndex];
                     
-                    // Check if this is a final result or confident interim result
-                    if (result.isFinal || result[0].confidence > 0.7) {
+                    // Process both interim and final results for faster response
+                    // Lower confidence threshold for interim results to be more responsive
+                    const isConfident = result.isFinal || result[0].confidence > 0.5;
+                    
+                    if (isConfident) {
                         let foundMatch = false;
                         
                         // Check all alternatives for better accuracy
                         for (let i = 0; i < result.length; i++) {
                             const transcript = result[i].transcript.toLowerCase().trim();
-                            console.log(`Processing: "${transcript}" (confidence: ${result[i].confidence})`);
+                            console.log(`Processing: "${transcript}" (confidence: ${result[i].confidence}, final: ${result.isFinal})`);
                             
-                            // More flexible matching - focus on evaluation words
-                            // Words for CORRECT (BENAR)
-                            if (transcript.includes('benar') || transcript.includes('bener') || transcript.includes('betul') || transcript.includes('nar') ||
-                                transcript.includes('sip') || transcript.includes('good') || transcript.includes('bagus') || 
-                                transcript.includes('masyaallah') || transcript.includes('masya allah') || transcript.includes('maa syaa allah') ||
-                                transcript.includes('alhamdulillah') || transcript.includes('alhamdulilah')) {
+                            // Quick pattern matching for faster response
+                            // Words for CORRECT (BENAR) - prioritize common words first
+                            if (transcript.includes('benar') || transcript.includes('sip') || transcript.includes('bagus') || 
+                                transcript.includes('good') || transcript.includes('bener') || transcript.includes('betul') || 
+                                transcript.includes('masyaallah') || transcript.includes('masya allah') || 
+                                transcript.includes('alhamdulillah') || transcript.includes('nar')) {
                                 selectAnswer(true);
                                 foundMatch = true;
                                 break;
                             } 
-                            // Words for INCORRECT (SALAH)
-                            else if (transcript.includes('salah') || transcript.includes('sala') || transcript.includes('keliru') || transcript.includes('lah') ||
-                                     transcript.includes('eits') || transcript.includes('awas') || transcript.includes('masih') || 
-                                     transcript.includes('ulangi') || transcript.includes('ulang')) {
+                            // Words for INCORRECT (SALAH) - prioritize common words first
+                            else if (transcript.includes('salah') || transcript.includes('eits') || transcript.includes('awas') || 
+                                     transcript.includes('ulangi') || transcript.includes('ulang') || transcript.includes('sala') || 
+                                     transcript.includes('keliru') || transcript.includes('masih') || transcript.includes('lah')) {
                                 selectAnswer(false);
                                 foundMatch = true;
                                 break;
@@ -1138,12 +1154,12 @@
                         updateVoiceUI();
                         document.getElementById('voice-text').textContent = 'Koneksi internet diperlukan untuk pengenalan suara.';
                     } else {
-                        // For other errors like 'no-speech', just restart automatically
+                        // For other errors like 'no-speech', just restart automatically - faster recovery
                         setTimeout(() => {
                             if (selectedAnswer === null && !isListening) {
                                 startListening();
                             }
-                        }, 1000);
+                        }, 200); // Reduced from 1000ms to 200ms for faster error recovery
                     }
                 };
                 
@@ -1152,13 +1168,13 @@
                     updateVoiceUI();
                     console.log('Speech recognition ended');
                     
-                    // Auto-restart if no answer selected yet
+                    // Auto-restart if no answer selected yet - faster restart
                     if (selectedAnswer === null) {
                         setTimeout(() => {
                             if (selectedAnswer === null && !isListening) {
                                 startListening();
                             }
-                        }, 500);
+                        }, 100); // Reduced from 500ms to 100ms for faster restart
                     }
                 };
                 
@@ -1226,12 +1242,12 @@
             }, 1000);
         });
         
-        // Auto-start listening when question loads
+        // Auto-start listening when question loads - faster start
         function autoStartListening() {
             if (speechSupported && selectedAnswer === null) {
                 setTimeout(() => {
                     startListening();
-                }, 500); // Start immediately after question loads
+                }, 100); // Reduced from 500ms to 100ms for faster start
             }
         }
         
@@ -1242,5 +1258,5 @@
             autoStartListening();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c5420b30f6410c',t:'MTc1NzQwNTkzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c557de025e9f89',t:'MTc1NzQwNjgzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

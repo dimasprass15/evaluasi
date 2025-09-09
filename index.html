@@ -276,14 +276,18 @@
         }
         
         .voice-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
             border: 3px solid #4299e1;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
+            border-radius: 15px;
+            padding: 15px;
             text-align: center;
-            position: relative;
             overflow: hidden;
+            z-index: 1000;
+            width: 120px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         
         .voice-controls::before {
@@ -298,33 +302,34 @@
         }
         
         .voice-status {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         
         .mic-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
             animation: float 3s ease-in-out infinite;
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-5px); }
         }
         
         .voice-text {
-            font-size: 1.2rem;
+            font-size: 0.7rem;
             color: #4a5568;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
         
         .listening-indicator {
-            width: 30px;
-            height: 30px;
+            width: 15px;
+            height: 15px;
             background: #e2e8f0;
             border-radius: 50%;
-            margin: 0 auto 20px;
+            margin: 0 auto 10px;
             transition: all 0.3s ease;
             position: relative;
         }
@@ -390,14 +395,15 @@
             background: linear-gradient(135deg, #4299e1, #3182ce);
             color: white;
             border: none;
-            padding: 15px 40px;
-            border-radius: 25px;
-            font-size: 1.1rem;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
         
         .voice-button:hover {
@@ -540,29 +546,31 @@
             }
             
             .voice-controls {
-                padding: 20px 15px;
-                margin-bottom: 20px;
+                top: 15px;
+                right: 15px;
+                width: 100px;
+                padding: 12px;
             }
             
             .mic-icon {
-                font-size: 2.5rem;
-                margin-bottom: 10px;
+                font-size: 1.3rem;
+                margin-bottom: 3px;
             }
             
             .voice-text {
-                font-size: 1rem;
-                margin-bottom: 10px;
+                font-size: 0.6rem;
+                margin-bottom: 6px;
             }
             
             .listening-indicator {
-                width: 25px;
-                height: 25px;
-                margin-bottom: 15px;
+                width: 12px;
+                height: 12px;
+                margin-bottom: 8px;
             }
             
             .voice-button {
-                padding: 12px 25px;
-                font-size: 1rem;
+                padding: 6px 8px;
+                font-size: 0.6rem;
             }
             
             .feedback {
@@ -651,30 +659,32 @@
             }
             
             .voice-controls {
-                padding: 15px 10px;
-                margin-bottom: 15px;
+                top: 10px;
+                right: 10px;
+                width: 80px;
+                padding: 8px;
             }
             
             .mic-icon {
-                font-size: 2rem;
-                margin-bottom: 8px;
+                font-size: 1.1rem;
+                margin-bottom: 2px;
             }
             
             .voice-text {
-                font-size: 0.9rem;
-                margin-bottom: 8px;
-                line-height: 1.4;
+                font-size: 0.5rem;
+                margin-bottom: 4px;
+                line-height: 1.2;
             }
             
             .listening-indicator {
-                width: 20px;
-                height: 20px;
-                margin-bottom: 12px;
+                width: 10px;
+                height: 10px;
+                margin-bottom: 6px;
             }
             
             .voice-button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+                padding: 4px 6px;
+                font-size: 0.5rem;
             }
             
             .feedback {
@@ -726,20 +736,23 @@
             }
             
             .voice-controls {
-                padding: 12px 8px;
+                top: 8px;
+                right: 8px;
+                width: 70px;
+                padding: 6px;
             }
             
             .mic-icon {
-                font-size: 1.8rem;
+                font-size: 1rem;
             }
             
             .voice-text {
-                font-size: 0.8rem;
+                font-size: 0.45rem;
             }
             
             .voice-button {
-                padding: 8px 15px;
-                font-size: 0.8rem;
+                padding: 3px 5px;
+                font-size: 0.45rem;
             }
         }
     </style>
@@ -771,7 +784,7 @@
         <div class="question-card" id="question-card">
             <div class="question-number" id="question-number">Soal 1</div>
             <div class="arabic-word" id="arabic-word">تَرَ</div>
-            <div class="instruction-text">Siswa membaca kata di atas. Ustadz/Ustadzah menilai dengan suara:</div>
+            <div class="instruction-text">Siswa membaca kata di atas. Sistem otomatis mendengar penilaian Ustadz/Ustadzah.</div>
             
             <div class="voice-controls" id="voice-controls">
                 <div class="voice-status" id="voice-status">
@@ -995,12 +1008,22 @@
                     nextBtn.disabled = false;
                     nextBtn.style.display = 'inline-block';
                     repeatBtn.style.display = 'none';
+                    
+                    // Auto-progress to next question after 2 seconds
+                    setTimeout(() => {
+                        nextQuestion();
+                    }, 2000);
                 } else {
                     feedback.className = 'feedback incorrect';
                     feedback.innerHTML = `❌ Bacaan SALAH! Silakan ulangi bacaan kata ini.<br>Arti yang benar: <strong>${currentQuestion.meaning}</strong>`;
                     questionCard.classList.add('incorrect');
                     nextBtn.style.display = 'none';
                     repeatBtn.style.display = 'inline-block';
+                    
+                    // Auto-restart listening after 3 seconds for incorrect answer
+                    setTimeout(() => {
+                        repeatQuestion();
+                    }, 3000);
                 }
                 
                 updateStats();
@@ -1252,5 +1275,5 @@
             autoStartListening();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c5229296c09c74',t:'MTc1NzQwNDY0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c52b5ac6e4410c',t:'MTc1NzQwNTAwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

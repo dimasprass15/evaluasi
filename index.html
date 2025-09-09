@@ -769,7 +769,7 @@
             <div class="voice-controls" id="voice-controls">
                 <div class="voice-status" id="voice-status">
                     <div class="mic-icon">🎤</div>
-                    <div class="voice-text" id="voice-text">Katakan "BENAR" atau "SALAH"</div>
+                    <div class="voice-text" id="voice-text">Katakan evaluasi Anda</div>
                     <div class="listening-indicator" id="listening-indicator"></div>
                 </div>
                 <div class="auto-status">🔄 Otomatis Aktif</div>
@@ -1094,12 +1094,20 @@
                             const transcript = result[i].transcript.toLowerCase().trim();
                             console.log(`Processing: "${transcript}" (confidence: ${result[i].confidence})`);
                             
-                            // More flexible matching - focus only on "benar" and "salah"
-                            if (transcript.includes('benar') || transcript.includes('bener') || transcript.includes('betul') || transcript.includes('nar')) {
+                            // More flexible matching - focus on evaluation words
+                            // Words for CORRECT (BENAR)
+                            if (transcript.includes('benar') || transcript.includes('bener') || transcript.includes('betul') || transcript.includes('nar') ||
+                                transcript.includes('sip') || transcript.includes('good') || transcript.includes('bagus') || 
+                                transcript.includes('masyaallah') || transcript.includes('masya allah') || transcript.includes('maa syaa allah') ||
+                                transcript.includes('alhamdulillah') || transcript.includes('alhamdulilah')) {
                                 selectAnswer(true);
                                 foundMatch = true;
                                 break;
-                            } else if (transcript.includes('salah') || transcript.includes('sala') || transcript.includes('keliru') || transcript.includes('lah')) {
+                            } 
+                            // Words for INCORRECT (SALAH)
+                            else if (transcript.includes('salah') || transcript.includes('sala') || transcript.includes('keliru') || transcript.includes('lah') ||
+                                     transcript.includes('eits') || transcript.includes('awas') || transcript.includes('masih') || 
+                                     transcript.includes('ulangi') || transcript.includes('ulang')) {
                                 selectAnswer(false);
                                 foundMatch = true;
                                 break;
@@ -1196,20 +1204,16 @@
             if (isListening) {
                 voiceControls.classList.add('listening');
                 listeningIndicator.classList.add('active');
-                voiceText.textContent = 'Sedang mendengar... Katakan "BENAR" atau "SALAH"';
             } else {
                 voiceControls.classList.remove('listening');
                 listeningIndicator.classList.remove('active');
-                if (selectedAnswer === null && voiceText.textContent.includes('Sedang mendengar')) {
-                    voiceText.textContent = 'Katakan "BENAR" atau "SALAH"';
-                }
             }
         }
         
         function resetVoiceControls() {
             stopListening();
             updateVoiceUI();
-            document.getElementById('voice-text').textContent = 'Katakan "BENAR" atau "SALAH"';
+            document.getElementById('voice-text').textContent = 'Katakan evaluasi Anda';
         }
         
         // Initialize quiz on page load
@@ -1238,5 +1242,5 @@
             autoStartListening();
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c53785965bce52',t:'MTc1NzQwNTUwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c5420b30f6410c',t:'MTc1NzQwNTkzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

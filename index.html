@@ -915,6 +915,14 @@
                 <div class="stat-number" id="score">0</div>
                 <div class="stat-label">Total Skor</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stars-count">0⭐</div>
+                <div class="stat-label">Bintang</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="badge-title">-</div>
+                <div class="stat-label">Badge</div>
+            </div>
         </div>
         
         <div class="question-card" id="question-card">
@@ -992,6 +1000,7 @@
                 <div class="bonus-title">🏆 Bonus Level!</div>
                 <div class="bonus-points" id="bonus-points">+100</div>
                 <p>Poin bonus untuk menyelesaikan level!</p>
+                <div id="reward-text" style="margin-top:8px;color:#744210;font-weight:700;">Reward: <span id="reward-stars">-</span></div>
             </div>
             
             <button class="continue-btn" onclick="continueToNextLevel()">
@@ -1226,9 +1235,17 @@
         const TOTAL_LEVELS = 8; // 150 words / 20 = 7.5, rounded to 8
         const STORAGE_KEY = 'extraWords_v1';
         const STORAGE_PROGRESS_KEY = 'quizProgress_v1';
+        const STORAGE_STARS_KEY = 'stars_v1';
+        const BADGE_THRESHOLDS = [
+            { threshold: 50, name: 'Platinum' },
+            { threshold: 30, name: 'Gold' },
+            { threshold: 15, name: 'Silver' },
+            { threshold: 5, name: 'Bronze' }
+        ];
         let suppressModalOnce = false; // prevent modal from reappearing immediately after continue
         let levelIncorrectAttempts = 0;
         let levelIncorrectAttemptsForCurrentQuestion = 0;
+        let totalStars = 0;
         
         function getTotalLevels() {
             return Math.ceil(questions.length / WORDS_PER_LEVEL);
@@ -1248,6 +1265,7 @@
             levelIncorrectAttemptsForCurrentQuestion = 0;
             // load progress if any
             loadProgress();
+            loadStars();
             // clamp values if dataset changed
             if (currentQuestionIndex < 0 || currentQuestionIndex > questions.length) {
                 currentQuestionIndex = 0;
@@ -1270,6 +1288,8 @@
             document.getElementById('correct-count').textContent = correctAnswers;
             document.getElementById('level-correct').textContent = levelCorrectAnswers;
             document.getElementById('score').textContent = totalScore;
+            document.getElementById('stars-count').textContent = `${totalStars}⭐`;
+            document.getElementById('badge-title').textContent = computeBadge(totalStars);
             document.getElementById('current-level').textContent = currentLevel;
             document.getElementById('level-progress').textContent = `${levelProgress}/${totalInLevel}`;
             
@@ -1336,6 +1356,29 @@
             
             // Add bonus to total score
             totalScore += bonusPoints;
+
+            // Gamifikasi: reward bintang
+            // Kriteria:
+            // - 3⭐: 20 benar dan tanpa salah
+            // - 2⭐: minimal 18 benar dengan ≤2 salah
+            // - 1⭐: minimal 15 benar
+            let starsEarned = 0;
+            if (levelCorrectAnswers === WORDS_PER_LEVEL && levelIncorrectAttempts === 0) {
+                starsEarned = 3;
+            } else if (levelCorrectAnswers >= 18 && levelIncorrectAttempts <= 2) {
+                // alternatif: tingkatkan jika hampir sempurna dengan sedikit salah
+                starsEarned = 2;
+            } else if (levelCorrectAnswers >= 15) {
+                starsEarned = 1;
+            }
+            if (starsEarned > 0) {
+                totalStars += starsEarned;
+                saveStars();
+                document.getElementById('reward-stars').textContent = `${'⭐'.repeat(starsEarned)} (+${starsEarned})`;
+                document.getElementById('badge-title').textContent = computeBadge(totalStars);
+            } else {
+                document.getElementById('reward-stars').textContent = 'Tidak ada';
+            }
             
             // Show modal
             modal.style.display = 'flex';
@@ -1807,6 +1850,24 @@
             } catch (e) {
                 console.log('Gagal menghapus progres:', e);
             }
+        }
+
+        function saveStars() {
+            try { localStorage.setItem(STORAGE_STARS_KEY, String(totalStars)); } catch {}
+        }
+
+        function loadStars() {
+            try {
+                const raw = localStorage.getItem(STORAGE_STARS_KEY);
+                totalStars = raw ? parseInt(raw, 10) || 0 : 0;
+            } catch { totalStars = 0; }
+        }
+
+        function computeBadge(stars) {
+            for (const b of BADGE_THRESHOLDS) {
+                if (stars >= b.threshold) return b.name;
+            }
+            return '-';
         }
 
         function saveNewLevel() {

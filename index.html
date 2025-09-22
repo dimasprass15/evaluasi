@@ -282,6 +282,11 @@
             background: linear-gradient(135deg, #ed8936, #dd6b20);
             color: white;
         }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+        }
         
         .btn:hover {
             transform: translateY(-2px);
@@ -610,6 +615,213 @@
             font-weight: 700;
             font-family: 'UthmanicNeoColor', 'Amiri', serif;
             font-size: 1.1rem;
+        }
+
+        /* Level Management Styles */
+        .level-item {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-left: 4px solid #4299e1;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .level-item.built-in {
+            border-left-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .level-item.admin-added {
+            border-left-color: #ed8936;
+            background: #fffaf0;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .level-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .level-type {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .level-type.built-in {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .level-type.admin-added {
+            background: #fed7aa;
+            color: #9c4221;
+        }
+
+        .level-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+        }
+
+        .btn-edit {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-view {
+            background: #38a169;
+            color: white;
+        }
+
+        .level-words-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .word-preview {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.9rem;
+            font-family: 'UthmanicNeoColor', 'Amiri', serif;
+        }
+
+        /* View Words Modal Styles */
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .word-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .word-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4299e1, #38a169);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #4299e1;
+        }
+
+        .word-display {
+            font-family: 'UthmanicNeoColor', 'UthmanTaha', 'Scheherazade New', 'Amiri', serif;
+            font-size: 2rem;
+            color: #2d3748;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .word-meaning {
+            font-size: 0.8rem;
+            color: #718096;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .word-number {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #4299e1;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .level-info-header {
+            background: linear-gradient(135deg, #4299e1, #38a169);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .level-info-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .level-info-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .level-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .level-stat {
+            text-align: center;
+        }
+
+        .level-stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .level-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
         }
 
         .data-modal-actions {
@@ -951,7 +1163,8 @@
         <div class="controls">
             <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Kata Berikutnya</button>
             <button class="btn btn-success" id="repeat-btn" onclick="repeatQuestion()" style="display: none;">Ulangi Bacaan</button>
-            <button class="btn btn-warning" onclick="restartQuiz()">Mulai Ulang</button>
+            <button class="btn btn-warning" onclick="restartQuiz()" title="Hapus semua progress dan mulai dari Level 1">🔄 Mulai dari Awal</button>
+            <button class="btn btn-info" onclick="resumeFromLastLevel()" id="resume-btn" style="display: none;" title="Lanjutkan dari level terakhir dengan semua progress tersimpan">📚 Lanjut Level Terakhir</button>
         </div>
         
         <div class="final-score" id="final-score">
@@ -1027,6 +1240,7 @@
             </div>
             <div class="admin-form-row" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                 <div id="admin-stats" style="color:#4a5568;font-weight:700;">Memuat statistik…</div>
+                <button class="btn btn-primary" type="button" onclick="viewAllLevels()">📋 Kelola Level</button>
                 <button class="btn btn-primary" type="button" onclick="viewExistingData()">Lihat Data</button>
                 <button class="btn btn-warning" type="button" onclick="clearExtraData()">Hapus Tambahan</button>
                 <button class="btn btn-success" type="button" onclick="exportExtraData()">Export</button>
@@ -1051,6 +1265,54 @@
             <div class="data-modal-content" id="data-modal-content"></div>
             <div class="data-modal-actions">
                 <button class="btn admin-cancel" type="button" onclick="closeDataModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Management Modal -->
+    <div class="data-modal-overlay" id="level-management-modal">
+        <div class="data-modal" style="max-width: 1000px;">
+            <div class="data-modal-title">📋 Kelola Level</div>
+            <div class="data-modal-subtitle" id="level-management-subtitle">Memuat semua level...</div>
+            <div class="data-modal-content" id="level-management-content" style="max-height: 70vh;"></div>
+            <div class="data-modal-actions">
+                <button class="btn admin-cancel" type="button" onclick="closeLevelManagement()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Level Modal -->
+    <div class="data-modal-overlay" id="edit-level-modal">
+        <div class="data-modal" style="max-width: 800px;">
+            <div class="data-modal-title">✏️ Edit Level</div>
+            <div class="data-modal-subtitle" id="edit-level-subtitle">Edit kata dalam level</div>
+            <div class="data-modal-content" style="max-height: 60vh;">
+                <div class="admin-form-row">
+                    <label for="edit-level-name">Nama Level</label>
+                    <input id="edit-level-name" class="admin-input" placeholder="Nama Level" />
+                </div>
+                <div class="admin-form-row">
+                    <label for="edit-level-words">Daftar Kata (satu kata per baris)</label>
+                    <textarea id="edit-level-words" class="admin-textarea" style="min-height: 300px;" placeholder="تَرَ\nلَكَ\nمَعَ"></textarea>
+                </div>
+            </div>
+            <div class="data-modal-actions">
+                <button class="btn admin-cancel" type="button" onclick="closeEditLevel()">Batal</button>
+                <button class="btn admin-save" type="button" onclick="saveEditedLevel()">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Level Words Modal -->
+    <div class="data-modal-overlay" id="view-words-modal">
+        <div class="data-modal" style="max-width: 900px;">
+            <div class="data-modal-title" id="view-words-title">👁️ Lihat Kata Level</div>
+            <div class="data-modal-subtitle" id="view-words-subtitle">Daftar kata dalam level</div>
+            <div class="data-modal-content" id="view-words-content" style="max-height: 70vh; text-align: center;">
+                <!-- Words will be loaded here -->
+            </div>
+            <div class="data-modal-actions">
+                <button class="btn admin-cancel" type="button" onclick="closeViewWords()">Tutup</button>
             </div>
         </div>
     </div>
@@ -1255,6 +1517,8 @@
             // load extra words from localStorage first
             loadExtraWords();
             questions = arabicWords;
+            
+            // Reset all values to start fresh
             currentQuestionIndex = 0;
             correctAnswers = 0;
             totalScore = 0;
@@ -1263,17 +1527,16 @@
             levelCorrectAnswers = 0;
             levelIncorrectAttempts = 0;
             levelIncorrectAttemptsForCurrentQuestion = 0;
-            // load progress if any
-            loadProgress();
+            
+            // Load stars but don't load progress yet
             loadStars();
-            // clamp values if dataset changed
-            if (currentQuestionIndex < 0 || currentQuestionIndex > questions.length) {
-                currentQuestionIndex = 0;
-            }
             
             document.getElementById('final-score').style.display = 'none';
             document.getElementById('question-card').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'none';
+            
+            // Show resume button if there's saved progress
+            checkAndShowResumeButton();
             
             updateStats();
             showQuestion();
@@ -1568,6 +1831,67 @@
             clearProgress();
             initQuiz();
         }
+
+        function resumeFromLastLevel() {
+            // Hide resume button
+            document.getElementById('resume-btn').style.display = 'none';
+            
+            // Load ALL progress from localStorage (fresh load)
+            loadProgress();
+            loadStars();
+            
+            // Make sure we're in the right level
+            currentLevel = Math.floor(currentQuestionIndex / WORDS_PER_LEVEL) + 1;
+            
+            // Reset question card state
+            document.getElementById('final-score').style.display = 'none';
+            document.getElementById('question-card').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'none';
+            
+            // Reset subtitle to normal (with null check)
+            const subtitleEl = document.getElementById('subtitle');
+            if (subtitleEl) {
+                subtitleEl.innerHTML = 'Sistem Level dengan Bonus Poin!';
+            }
+            
+            // Reset voice controls
+            resetVoiceControls();
+            
+            // Update ALL stats to show current progress
+            updateStats();
+            showQuestion();
+            
+            // Force start listening after resume
+            setTimeout(() => {
+                if (speechSupported && selectedAnswer === null) {
+                    startListening();
+                }
+            }, 500);
+        }
+
+        function checkAndShowResumeButton() {
+            try {
+                const raw = localStorage.getItem(STORAGE_PROGRESS_KEY);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data && data.currentQuestionIndex > 0) {
+                        // Show resume button
+                        document.getElementById('resume-btn').style.display = 'inline-block';
+                        // Hide the question card initially to show the resume option
+                        document.getElementById('question-card').style.display = 'none';
+                        // Show a message about saved progress (with null check)
+                        const subtitleEl = document.getElementById('subtitle');
+                        if (subtitleEl) {
+                            subtitleEl.innerHTML = `Sistem Level dengan Bonus Poin!<br><small style="color: #38a169; font-weight: 700;">💾 Progress tersimpan di Level ${Math.floor(data.currentQuestionIndex / WORDS_PER_LEVEL) + 1}</small>`;
+                        }
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.log('Error checking resume data:', e);
+            }
+            return false;
+        }
         
         // Voice recognition variables
         let recognition = null;
@@ -1798,11 +2122,18 @@
                 if (!raw) return;
                 const arr = JSON.parse(raw);
                 if (Array.isArray(arr)) {
-                    arr.forEach(obj => {
-                        if (obj && typeof obj.arabic === 'string') {
-                            arabicWords.push({ arabic: obj.arabic, meaning: obj.meaning });
-                        }
-                    });
+                    // Only add if not already in arabicWords (prevent duplication)
+                    const currentLength = arabicWords.length;
+                    const baseLength = 160; // Built-in words count
+                    
+                    if (currentLength <= baseLength) {
+                        // Only add if we haven't loaded extras yet
+                        arr.forEach(obj => {
+                            if (obj && typeof obj.arabic === 'string') {
+                                arabicWords.push({ arabic: obj.arabic, meaning: obj.meaning });
+                            }
+                        });
+                    }
                 }
             } catch (e) {
                 console.log('Gagal memuat data tambahan:', e);
@@ -1831,12 +2162,20 @@
                 if (!raw) return;
                 const data = JSON.parse(raw);
                 if (!data) return;
+                
+                // Load all progress data
                 currentQuestionIndex = typeof data.currentQuestionIndex === 'number' ? data.currentQuestionIndex : 0;
                 correctAnswers = typeof data.correctAnswers === 'number' ? data.correctAnswers : 0;
                 totalScore = typeof data.totalScore === 'number' ? data.totalScore : 0;
                 currentLevel = typeof data.currentLevel === 'number' ? data.currentLevel : 1;
                 levelCorrectAnswers = typeof data.levelCorrectAnswers === 'number' ? data.levelCorrectAnswers : 0;
                 levelIncorrectAttempts = typeof data.levelIncorrectAttempts === 'number' ? data.levelIncorrectAttempts : 0;
+                
+                // Reset level stats for current level (since we're resuming mid-level)
+                levelCorrectAnswers = 0;
+                levelIncorrectAttempts = 0;
+                levelIncorrectAttemptsForCurrentQuestion = 0;
+                
                 // prevent immediate modal on resume
                 suppressModalOnce = true;
             } catch (e) {
@@ -1847,6 +2186,16 @@
         function clearProgress() {
             try {
                 localStorage.removeItem(STORAGE_PROGRESS_KEY);
+                localStorage.removeItem(STORAGE_STARS_KEY);
+                // Reset all variables to initial state
+                currentQuestionIndex = 0;
+                correctAnswers = 0;
+                totalScore = 0;
+                currentLevel = 1;
+                levelCorrectAnswers = 0;
+                levelIncorrectAttempts = 0;
+                levelIncorrectAttemptsForCurrentQuestion = 0;
+                totalStars = 0;
             } catch (e) {
                 console.log('Gagal menghapus progres:', e);
             }
@@ -1883,12 +2232,16 @@
                 errEl.style.display = 'block';
                 return;
             }
-            // Append to master words and active questions
+            
+            // Only add to arabicWords array (don't add to questions separately)
             result.items.forEach(item => {
                 arabicWords.push(item);
-                questions.push(item);
             });
-            // Persist extras
+            
+            // Update questions array to match arabicWords
+            questions = arabicWords;
+            
+            // Persist extras to localStorage
             try {
                 const existingRaw = localStorage.getItem(STORAGE_KEY);
                 const existing = existingRaw ? JSON.parse(existingRaw) : [];
@@ -2037,6 +2390,304 @@
                 showToast('Tambahan dihapus');
             } catch (e) {
                 alert('Gagal menghapus tambahan.');
+            }
+        }
+
+        // Level Management Functions
+        let currentEditingLevel = null;
+        let currentEditingLevelIndex = -1;
+        let currentEditingIsBuiltIn = false;
+
+        function viewAllLevels() {
+            const modal = document.getElementById('level-management-modal');
+            const content = document.getElementById('level-management-content');
+            const subtitle = document.getElementById('level-management-subtitle');
+            
+            content.innerHTML = '';
+            
+            // Get built-in levels (first 8 levels)
+            const builtInLevels = [];
+            for (let i = 0; i < 8; i++) {
+                const startIndex = i * WORDS_PER_LEVEL;
+                const endIndex = Math.min(startIndex + WORDS_PER_LEVEL, arabicWords.length);
+                const words = arabicWords.slice(startIndex, endIndex);
+                builtInLevels.push({
+                    levelNumber: i + 1,
+                    words: words,
+                    isBuiltIn: true,
+                    startIndex: startIndex
+                });
+            }
+            
+            // Get admin-added levels (from index 160 onwards)
+            const adminLevels = [];
+            const adminStartIndex = 160; // Built-in levels end at index 160
+            const adminWords = arabicWords.slice(adminStartIndex);
+            
+            for (let i = 0; i < adminWords.length; i += WORDS_PER_LEVEL) {
+                const levelNumber = Math.floor(i / WORDS_PER_LEVEL) + 9; // Start from level 9
+                const words = adminWords.slice(i, i + WORDS_PER_LEVEL);
+                adminLevels.push({
+                    levelNumber: levelNumber,
+                    words: words,
+                    isBuiltIn: false,
+                    startIndex: adminStartIndex + i
+                });
+            }
+            
+            subtitle.textContent = `Total: ${builtInLevels.length} Level Built-in + ${adminLevels.length} Level Admin`;
+            
+            // Display built-in levels
+            builtInLevels.forEach(level => {
+                const levelDiv = createLevelItem(level);
+                content.appendChild(levelDiv);
+            });
+            
+            // Display admin levels
+            adminLevels.forEach(level => {
+                const levelDiv = createLevelItem(level);
+                content.appendChild(levelDiv);
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        function createLevelItem(level) {
+            const div = document.createElement('div');
+            div.className = `level-item ${level.isBuiltIn ? 'built-in' : 'admin-added'}`;
+            
+            const wordsPreview = level.words.slice(0, 5).map(w => w.arabic).join(', ');
+            const moreWords = level.words.length > 5 ? ` +${level.words.length - 5} kata` : '';
+            
+            div.innerHTML = `
+                <div class="level-header">
+                    <div class="level-title">Level ${level.levelNumber}</div>
+                    <div class="level-type ${level.isBuiltIn ? 'built-in' : 'admin-added'}">
+                        ${level.isBuiltIn ? 'Built-in' : 'Admin Added'}
+                    </div>
+                </div>
+                <div class="level-words-preview">
+                    ${level.words.slice(0, 8).map(w => `<span class="word-preview">${w.arabic}</span>`).join('')}
+                    ${level.words.length > 8 ? `<span class="word-preview">+${level.words.length - 8} lagi</span>` : ''}
+                </div>
+                <div class="level-actions">
+                    <button class="btn btn-small btn-view" onclick="viewLevelWords(${level.levelNumber}, ${level.isBuiltIn})">
+                        👁️ Lihat
+                    </button>
+                    <button class="btn btn-small btn-edit" onclick="editLevel(${level.levelNumber}, ${level.startIndex}, ${level.isBuiltIn})">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn btn-small btn-delete" onclick="deleteLevel(${level.levelNumber}, ${level.startIndex}, ${level.isBuiltIn})">
+                        🗑️ Hapus
+                    </button>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function viewLevelWords(levelNumber, isBuiltIn) {
+            const startIndex = (levelNumber - 1) * WORDS_PER_LEVEL;
+            const endIndex = Math.min(startIndex + WORDS_PER_LEVEL, arabicWords.length);
+            const words = arabicWords.slice(startIndex, endIndex);
+            
+            const modal = document.getElementById('view-words-modal');
+            const title = document.getElementById('view-words-title');
+            const subtitle = document.getElementById('view-words-subtitle');
+            const content = document.getElementById('view-words-content');
+            
+            // Update modal title and subtitle
+            title.textContent = `👁️ Level ${levelNumber}`;
+            subtitle.textContent = `${isBuiltIn ? 'Built-in Level' : 'Admin Added Level'} - ${words.length} kata`;
+            
+            // Create level info header
+            let html = `
+                <div class="level-info-header">
+                    <div class="level-info-title">Level ${levelNumber}</div>
+                    <div class="level-info-subtitle">${isBuiltIn ? '🏗️ Built-in Level' : '🛠️ Admin Added Level'}</div>
+                    <div class="level-stats">
+                        <div class="level-stat">
+                            <div class="level-stat-number">${words.length}</div>
+                            <div class="level-stat-label">Total Kata</div>
+                        </div>
+                        <div class="level-stat">
+                            <div class="level-stat-number">${Math.ceil(levelNumber / 1)}</div>
+                            <div class="level-stat-label">Urutan Level</div>
+                        </div>
+                        <div class="level-stat">
+                            <div class="level-stat-number">${isBuiltIn ? '✅' : '🔧'}</div>
+                            <div class="level-stat-label">Status</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="words-grid">
+            `;
+            
+            // Create word cards
+            words.forEach((word, index) => {
+                html += `
+                    <div class="word-card">
+                        <div class="word-number">${index + 1}</div>
+                        <div class="word-display">${word.arabic}</div>
+                        ${word.meaning ? `<div class="word-meaning">${word.meaning}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function editLevel(levelNumber, startIndex, isBuiltIn) {
+            currentEditingLevel = levelNumber;
+            currentEditingLevelIndex = startIndex;
+            currentEditingIsBuiltIn = isBuiltIn;
+            
+            const modal = document.getElementById('edit-level-modal');
+            const nameInput = document.getElementById('edit-level-name');
+            const wordsInput = document.getElementById('edit-level-words');
+            const subtitle = document.getElementById('edit-level-subtitle');
+            
+            // Get words for this level
+            const words = arabicWords.slice(startIndex, startIndex + WORDS_PER_LEVEL);
+            
+            nameInput.value = `Level ${levelNumber}`;
+            wordsInput.value = words.map(w => w.arabic).join('\n');
+            
+            // Update subtitle to show level type
+            subtitle.textContent = `Edit kata dalam level ${levelNumber} (${isBuiltIn ? 'Built-in' : 'Admin Added'})`;
+            
+            modal.style.display = 'flex';
+        }
+
+        function saveEditedLevel() {
+            const nameInput = document.getElementById('edit-level-name');
+            const wordsInput = document.getElementById('edit-level-words');
+            
+            const words = wordsInput.value.split('\n').map(w => w.trim()).filter(w => w.length > 0);
+            
+            if (words.length !== WORDS_PER_LEVEL) {
+                alert(`Harus ${WORDS_PER_LEVEL} kata, sekarang ${words.length}`);
+                return;
+            }
+            
+            // Update words in arabicWords array
+            for (let i = 0; i < WORDS_PER_LEVEL; i++) {
+                arabicWords[currentEditingLevelIndex + i] = {
+                    arabic: words[i],
+                    meaning: undefined
+                };
+            }
+            
+            // If editing built-in level, we need to save it as admin level
+            if (currentEditingIsBuiltIn) {
+                // Convert built-in level to admin level
+                convertBuiltInToAdminLevel(currentEditingLevelIndex);
+            } else {
+                // Update localStorage for admin levels
+                updateExtraWordsInStorage();
+            }
+            
+            showToast('Level berhasil diupdate');
+            closeEditLevel();
+            viewAllLevels(); // Refresh the list
+        }
+
+        function deleteLevel(levelNumber, startIndex, isBuiltIn) {
+            const levelType = isBuiltIn ? 'Built-in' : 'Admin Added';
+            if (!confirm(`Hapus Level ${levelNumber} (${levelType})? Tindakan ini tidak dapat dibatalkan.`)) return;
+            
+            if (isBuiltIn) {
+                // For built-in levels, we need to convert them to admin levels first, then delete
+                convertBuiltInToAdminLevel(startIndex);
+                // Now delete the admin level
+                deleteAdminLevel(startIndex);
+                showToast('Level built-in berhasil dihapus');
+            } else {
+                // For admin levels, delete directly
+                deleteAdminLevel(startIndex);
+                showToast('Level admin berhasil dihapus');
+            }
+            
+            viewAllLevels(); // Refresh the list
+        }
+
+        function deleteAdminLevel(startIndex) {
+            // Remove words from arabicWords array
+            arabicWords.splice(startIndex, WORDS_PER_LEVEL);
+            
+            // Update localStorage
+            updateExtraWordsInStorage();
+        }
+
+        function updateExtraWordsInStorage() {
+            try {
+                // Get only admin-added words (after index 160)
+                const adminWords = arabicWords.slice(160);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(adminWords));
+                
+                // Update questions array to match arabicWords
+                questions = arabicWords;
+                
+                // Update stats
+                updateAdminStats();
+                updateStats();
+            } catch (e) {
+                console.log('Gagal update storage:', e);
+            }
+        }
+
+        function getExtraWords() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function closeLevelManagement() {
+            document.getElementById('level-management-modal').style.display = 'none';
+        }
+
+        function closeEditLevel() {
+            document.getElementById('edit-level-modal').style.display = 'none';
+            currentEditingLevel = null;
+            currentEditingLevelIndex = -1;
+            currentEditingIsBuiltIn = false;
+        }
+
+        function closeViewWords() {
+            document.getElementById('view-words-modal').style.display = 'none';
+        }
+
+        function convertBuiltInToAdminLevel(startIndex) {
+            try {
+                // Get the edited level words
+                const editedWords = arabicWords.slice(startIndex, startIndex + WORDS_PER_LEVEL);
+                
+                // Get existing admin words
+                const existingAdminWords = getExtraWords();
+                
+                // Add the edited level to admin words
+                const updatedAdminWords = [...existingAdminWords, ...editedWords];
+                
+                // Save to localStorage
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAdminWords));
+                
+                // Update questions array
+                questions = arabicWords;
+                
+                // Update stats
+                updateAdminStats();
+                updateStats();
+                
+                showToast('Level built-in berhasil dikonversi ke admin level');
+            } catch (e) {
+                console.log('Gagal konversi level:', e);
+                alert('Gagal menyimpan perubahan level built-in');
             }
         }
     </script>
